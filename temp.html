@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Cards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-header {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-name {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-supplier {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .product-details {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .price {
+            font-size: 1.2rem;
+            color: #2c5282;
+            font-weight: bold;
+        }
+
+        .stock-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .in-stock {
+            background-color: #c6f6d5;
+            color: #2f855a;
+        }
+
+        .low-stock {
+            background-color: #feebc8;
+            color: #c05621;
+        }
+
+        .discontinued {
+            background-color: #fed7d7;
+            color: #c53030;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="products-grid" class="products-grid"></div>
+    </div>
+
+    <script>
+        const products = [{
+            productId: "1",
+            productName: "Chai",
+            unitPrice: 18.0000,
+            unitsInStock: 39,
+            categoryId: "1",
+            supplier: "Exotic Liquids",
+            discontinued: "false"
+        },
+        {
+            productId: "2",
+            productName: "Chang",
+            unitPrice: 19.0000,
+            unitsInStock: 17,
+            categoryId: "1",
+            supplier: "Exotic Liquids",
+            discontinued: "false"
+        }];
+
+        function getStockStatus(unitsInStock, discontinued) {
+            if (discontinued === "true") return ["Discontinued", "discontinued"];
+            if (unitsInStock === 0) return ["Out of Stock", "discontinued"];
+            if (unitsInStock < 20) return ["Low Stock", "low-stock"];
+            return ["In Stock", "in-stock"];
+        }
+
+        function createProductCard(product) {
+            const [stockLabel, stockClass] = getStockStatus(product.unitsInStock, product.discontinued);
+            
+            return `
+                <div class="product-card">
+                    <div class="product-header">
+                        <h2 class="product-name">${product.productName}</h2>
+                        <div class="product-supplier">${product.supplier}</div>
+                    </div>
+                    <div class="product-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Price</span>
+                            <span class="price">$${parseFloat(product.unitPrice).toFixed(2)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Stock Status</span>
+                            <span class="stock-status ${stockClass}">${stockLabel}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Units in Stock</span>
+                            <span class="detail-value">${product.unitsInStock}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Product ID</span>
+                            <span class="detail-value">${product.productId}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Category ID</span>
+                            <span class="detail-value">${product.categoryId}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProducts() {
+            const productsGrid = document.getElementById('products-grid');
+            productsGrid.innerHTML = products.map(product => createProductCard(product)).join('');
+        }
+
+        // Render products when the page loads
+        renderProducts();
+    </script>
+</body>
+</html>
